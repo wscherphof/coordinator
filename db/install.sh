@@ -1,0 +1,13 @@
+ORCL=${DB_PORT_1521_TCP_ADDR}:${DB_PORT_1521_TCP_PORT}/orcl
+FULL_INSTALL=/jbpp/jboss-4.2.3.GA/server/coord/coordConfig/database/ism_setup/full_install
+
+sqlplus system/manager@$ORCL @/create_user.sql
+
+echo "@$FULL_INSTALL/hpdoc_oracle-R2.7.2.sql" > /run.sql
+echo "@$FULL_INSTALL/create_coord_oracle.sql" >> /run.sql
+echo "exit" >> /run.sql
+sqlplus coord/coord@$ORCL @/run.sql
+
+echo "@$FULL_INSTALL/tables_oracle-R1.1.3.sql" > /run.sql
+echo "exit" >> /run.sql
+sqlplus sched/sched@$ORCL @/run.sql

@@ -1,0 +1,42 @@
+#!/bin/bash
+
+ORCL=${DB_PORT_1521_TCP_ADDR}:${DB_PORT_1521_TCP_PORT}:${DB_ENV_ORACLE_SID}
+
+QUARTZ=/app/ismobile/swiftmq_8_1_2_jmsplus/coordConfig/quartz.properties
+sed -i -E "s/CobraDS.URL = [^\n]+/CobraDS.URL = jdbc:oracle:thin:@${ORCL}/g" ${QUARTZ}
+sed -i -E "s/CobraDS.user = [^\n]+/CobraDS.user = ${UID_SCHED}/g" ${QUARTZ}
+sed -i -E "s/CobraDS.password = [^\n]+/CobraDS.password = ${PWD_SCHED}/g" ${QUARTZ}
+
+ORACLE_DS=/app/ismobile/jboss-4.2.3.GA/server/coord/deploy/oracle-ds.xml
+sed -i -E "s/<connection-url>[^<]+/<connection-url>jdbc:oracle:thin:@${ORCL}/g" ${ORACLE_DS}
+sed -i -E "s/<user-name>[^<]+/<user-name>${UID_JMS}/g" ${ORACLE_DS}
+sed -i -E "s/<password>[^<]+/<password>${PWD_JMS}/g" ${ORACLE_DS}
+
+ORACLE_XA_DS=/app/ismobile/jboss-4.2.3.GA/server/coord/deploy/oracle-xa-ds.xml
+sed -i -E "s/property name=\"URL\">[^<]+/property name=\"URL\">jdbc:oracle:thin:@${ORCL}/g" ${ORACLE_XA_DS}
+sed -i -E "s/property name=\"User\">[^<]+/property name=\"User\">${UID_DB}/g" ${ORACLE_XA_DS}
+sed -i -E "s/property name=\"Password\">[^<]+/property name=\"Password\">${PWD_DB}/g" ${ORACLE_XA_DS}
+
+while :
+do
+    if kill -0 ${PID_SMQ} 2> /dev/null
+    then
+        echo "Swift is running" > /dev/null
+    else
+		cd /app/ismobile/swiftmq_8_1_2_jmsplus/scripts/unix/
+		./smqr1 &
+		PID_SMQ=$!
+		cd /
+		sleep 5
+    fi
+    if kill -0 ${PID_JB} 2> /dev/null
+    then
+        echo "jBoss is running" > /dev/null
+    else
+		cd /app/ismobile/jboss-4.2.3.GA/bin
+		./run.sh -c coord -g MY_PARTITION -u 230.1.2.10 -b 0.0.0.0 &
+		PID_JB=$!
+		cd /
+    fi
+    sleep 1m
+done
