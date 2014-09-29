@@ -21,21 +21,20 @@ echo "done"
 
 echo "Creating jBoss prepack /jbpp data volume container"
 if [ ! -f jbpp/bc_jbossprepack-R4.7.0.zip ]; then
-  cd jbpp
   wget http://releases.hq.ismobile.com/packages/coordinator-R4.7/bc_jbossprepack-R4.7.0.zip
-  cd ..
 fi
-docker build -t setup/jbpp jbpp
-docker run --name jbpp setup/jbpp true
+mkdir jbpp
+docker run --name jbpp -v $(pwd)/jbpp:/jbpp busybox true
+docker run --rm -v $(pwd)/bc_jbossprepack-R4.7.0.zip:/pp.zip --volumes-from jbpp busybox unzip /pp.zip -d /jbpp
+cp ojdbc7.jar jbpp/jboss-4.2.3.GA/server/coord/coordConfig/database/oracle-libs
 
 echo "Creating SwiftMQ prepack /smqpp data volume container"
 if [ ! -f smqpp/bc_swiftmqprepack-R4.7.0.zip ]; then
-  cd smqpp
   wget http://releases.hq.ismobile.com/packages/coordinator-R4.7/bc_swiftmqprepack-R4.7.0.zip
-  cd ..
 fi
-docker build -t setup/smqpp smqpp
-docker run --name smqpp setup/smqpp true
+mkdir smqpp
+docker run --name smqpp -v $(pwd)/smqpp:/smqpp busybox true
+docker run --rm -v $(pwd)/bc_swiftmqprepack-R4.7.0.zip:/pp.zip --volumes-from smqpp busybox unzip /pp.zip -d /smqpp
 
 echo "Creating database schemas"
 docker build -t setup/db db
@@ -64,11 +63,11 @@ echo "Removing the intermediairy Java images"
 docker rmi setup/jboss
 docker rmi setup/swift
 
-echo "Removing the data volume containers & images"
+echo "Removing the data volumes"
 docker rm -v jbpp
-docker rmi setup/jbpp
+rm -rf jbpp
 docker rm -v smqpp
-docker rmi setup/smqpp
+rm -rf smqpp
 
 echo ""
 echo "Done. Now: $(date) - Started: $START"
