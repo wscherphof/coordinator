@@ -21,7 +21,7 @@ done
 echo "done"
 
 echo "Creating jBoss prepack /jbpp data volume container"
-if [ ! -f jbpp/bc_jbossprepack-R4.7.0.zip ]; then
+if [ ! -f bc_jbossprepack-R4.7.0.zip ]; then
   wget http://releases.hq.ismobile.com/packages/coordinator-R4.7/bc_jbossprepack-R4.7.0.zip
 fi
 mkdir jbpp
@@ -30,7 +30,7 @@ docker run --rm -v $(pwd)/bc_jbossprepack-R4.7.0.zip:/pp.zip --volumes-from jbpp
 cp ojdbc7.jar jbpp/jboss-4.2.3.GA/server/coord/coordConfig/database/oracle-libs
 
 echo "Creating SwiftMQ prepack /smqpp data volume container"
-if [ ! -f smqpp/bc_swiftmqprepack-R4.7.0.zip ]; then
+if [ ! -f bc_swiftmqprepack-R4.7.0.zip ]; then
   wget http://releases.hq.ismobile.com/packages/coordinator-R4.7/bc_swiftmqprepack-R4.7.0.zip
 fi
 mkdir smqpp
