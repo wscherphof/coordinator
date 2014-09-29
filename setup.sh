@@ -20,9 +20,20 @@ done
 echo "done"
 
 echo "Creating jBoss prepack /jbpp data volume container"
+if [ ! -f jbpp/bc_jbossprepack-R4.7.0.zip ]; then
+  cd jbpp
+  wget http://releases.hq.ismobile.com/packages/coordinator-R4.7/bc_jbossprepack-R4.7.0.zip
+  cd ..
+fi
 docker build -t setup/jbpp jbpp
 docker run --name jbpp setup/jbpp true
+
 echo "Creating SwiftMQ prepack /smqpp data volume container"
+if [ ! -f smqpp/bc_swiftmqprepack-R4.7.0.zip ]; then
+  cd smqpp
+  wget http://releases.hq.ismobile.com/packages/coordinator-R4.7/bc_swiftmqprepack-R4.7.0.zip
+  cd ..
+fi
 docker build -t setup/smqpp smqpp
 docker run --name smqpp setup/smqpp true
 
