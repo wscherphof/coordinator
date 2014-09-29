@@ -1,3 +1,5 @@
+#!/bin/bash
+
 START=$(date)
 
 echo "Starting an Oracle container"
