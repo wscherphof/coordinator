@@ -10,7 +10,7 @@ docker start orcl
 echo -n "Wait while ensuring the database has started..."
 ERROR=true
 while [ $ERROR ]; do
-	ERROR=$(docker run --rm --link orcl:db -v $(pwd)/setup/connect:/connect guywithnose/sqlplus /connect | grep ERROR)
+	ERROR=$(docker run --rm --link orcl:db -v $(pwd)/setup:/setup guywithnose/sqlplus /setup/connect | grep ERROR)
 	if [ $ERROR ]; then
 		for i in {1..3}; do
 			echo -n "."
@@ -38,14 +38,10 @@ docker run --name smqpp -v $(pwd)/smqpp:/smqpp busybox true
 docker run --rm -v $(pwd)/bc_swiftmqprepack-R4.7.0.zip:/pp.zip --volumes-from smqpp busybox unzip /pp.zip -d /smqpp
 
 echo "Creating database schemas"
-docker build -t setup/db db
-docker run --rm --volumes-from jbpp --link orcl:db setup/db
-docker rmi setup/db
+docker run --rm -v $(pwd)/db:/setup --volumes-from jbpp --link orcl:db guywithnose/sqlplus /setup/install
 
 echo "Creating HpDoc heap"
-docker build -t setup/heap heap
-docker run --rm --volumes-from jbpp --link orcl:db setup/heap
-docker rmi setup/heap
+docker run --rm -v $(pwd)/heap:/setup --volumes-from jbpp --link orcl:db tifayuki/java:7 /setup/create
 
 echo "Installing the jBoss & SwiftMQ packages in a Java image"
 docker run --name jboss --volumes-from jbpp tifayuki/java:7 /bin/bash -c "mkdir /app && mkdir /app/ismobile && cp -r /jbpp/* /app/ismobile"

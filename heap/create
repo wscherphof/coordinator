@@ -1,3 +1,5 @@
+#!/bin/bash
+
 ORCL=${DB_PORT_1521_TCP_ADDR}:${DB_PORT_1521_TCP_PORT}:${DB_ENV_ORACLE_SID}
 DATABASE=/jbpp/jboss-4.2.3.GA/server/coord/coordConfig/database
 
