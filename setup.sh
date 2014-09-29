@@ -8,8 +8,7 @@ docker start orcl
 echo -n "Wait while ensuring the database has started..."
 ERROR=true
 while [ $ERROR ]; do
-	ERROR=$(docker run --name connect --link orcl:db -v $(pwd)/connect:/connect guywithnose/sqlplus /connect | grep ERROR)
-	docker rm -v connect > /dev/null
+	ERROR=$(docker run --rm --link orcl:db -v $(pwd)/setup/connect:/connect guywithnose/sqlplus /connect | grep ERROR)
 	if [ $ERROR ]; then
 		for i in {1..3}; do
 			echo -n "."
