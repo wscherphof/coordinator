@@ -5,13 +5,19 @@ echo "Starting an Oracle container"
 docker run --privileged --name orcl -d wscherphof/oracle-12c 2> /dev/null
 # in case it already existed and was stopped
 docker start orcl
-echo -n "Wait to ensure the database has started"
-for i in {1..60}
-do
-	echo -n "."
-	sleep 1
+echo -n "Wait while ensuring the database has started..."
+ERROR=true
+while [ $ERROR ]; do
+	ERROR=$(docker run --name connect --link orcl:db -v $(pwd)/connect:/connect guywithnose/sqlplus /connect | grep ERROR)
+	docker rm -v connect > /dev/null
+	if [ $ERROR ]; then
+		for i in {1..3}; do
+			echo -n "."
+			sleep 1
+		done
+	fi
 done
-echo ""
+echo "done"
 
 echo "Creating jBoss prepack /jbpp data volume container"
 docker build -t setup/jbpp jbpp

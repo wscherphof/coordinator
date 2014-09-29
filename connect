@@ -1,0 +1,9 @@
+#!/bin/bash
+
+ORCL=${DB_PORT_1521_TCP_ADDR}:${DB_PORT_1521_TCP_PORT}/orcl
+cat >> /connect.sql <<EOF
+connect system/manager@$ORCL
+exit
+EOF
+
+sqlplus /nolog @/connect.sql
