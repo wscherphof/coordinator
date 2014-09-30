@@ -8,17 +8,16 @@ docker run --privileged --name orcl -d wscherphof/oracle-12c 2> /dev/null
 # in case it already existed and was stopped
 docker start orcl
 echo -n "Wait while ensuring the database has started..."
-ERROR=true
-while [ $ERROR ]; do
+while :; do
 	ERROR=$(docker run --rm --link orcl:db -v $(pwd)/setup:/setup guywithnose/sqlplus /setup/connect | grep ERROR)
 	if [ $ERROR ]; then
-		for i in {1..3}; do
-			echo -n "."
-			sleep 1
-		done
+    echo -n "."
+    sleep 1
+  else
+    echo "done"
+    break
 	fi
 done
-echo "done"
 
 echo "Creating jBoss prepack /jbpp data volume container"
 if [ ! -f bc_jbossprepack-R4.7.0.zip ]; then
