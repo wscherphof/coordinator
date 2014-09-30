@@ -2,5 +2,5 @@
 
 mkdir /app
 mkdir /app/ismobile
-cp -r /jbpp/* /app/ismobile
-cp -r /smqpp/* /app/ismobile
+cp -r /pp/jboss/* /app/ismobile
+cp -r /pp/smq/* /app/ismobile
