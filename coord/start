@@ -3,14 +3,14 @@
 ORCL=${DB_PORT_1521_TCP_ADDR}:${DB_PORT_1521_TCP_PORT}:${DB_ENV_ORACLE_SID}
 
 QUARTZ=/app/ismobile/swiftmq_8_1_2_jmsplus/coordConfig/quartz.properties
-sed -i -E "s/CobraDS.URL = [^\n]+/CobraDS.URL = jdbc:oracle:thin:@${ORCL}/g" ${QUARTZ}
-sed -i -E "s/CobraDS.user = [^\n]+/CobraDS.user = ${UID_SCHED}/g" ${QUARTZ}
-sed -i -E "s/CobraDS.password = [^\n]+/CobraDS.password = ${PWD_SCHED}/g" ${QUARTZ}
+sed -i -E "s/CobraDS.URL = [^\n]+/CobraDS.URL = jdbc:oracle:thin:@${ORCL}/" ${QUARTZ}
+sed -i -E "s/CobraDS.user = [^\n]+/CobraDS.user = ${UID_SCHED}/" ${QUARTZ}
+sed -i -E "s/CobraDS.password = [^\n]+/CobraDS.password = ${PWD_SCHED}/" ${QUARTZ}
 
 ORACLE_DS=/app/ismobile/jboss-4.2.3.GA/server/coord/deploy/oracle-ds.xml
-sed -i -E "s/<connection-url>[^<]+/<connection-url>jdbc:oracle:thin:@${ORCL}/g" ${ORACLE_DS}
-sed -i -E "s/<user-name>[^<]+/<user-name>${UID_JMS}/g" ${ORACLE_DS}
-sed -i -E "s/<password>[^<]+/<password>${PWD_JMS}/g" ${ORACLE_DS}
+sed -i -E "s/<connection-url>[^<]+/<connection-url>jdbc:oracle:thin:@${ORCL}/" ${ORACLE_DS}
+sed -i -E "s/<user-name>[^<]+/<user-name>${UID_JMS}/" ${ORACLE_DS}
+sed -i -E "s/<password>[^<]+/<password>${PWD_JMS}/" ${ORACLE_DS}
 
 ORACLE_XA_DS=/app/ismobile/jboss-4.2.3.GA/server/coord/deploy/oracle-xa-ds.xml
 sed -i -E "s/property name=\"URL\">[^<]+/property name=\"URL\">jdbc:oracle:thin:@${ORCL}/g" ${ORACLE_XA_DS}
