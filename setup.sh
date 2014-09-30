@@ -35,7 +35,7 @@ fi
 mkdir pp/jboss
 docker run --rm -v $(pwd)/bc_jbossprepack-R4.7.0.zip:/pp.zip --volumes-from pp busybox unzip /pp.zip -d /pp/jboss
 # also include the java 7 ojdbc jar
-cp ojdbc7.jar pp/jboss/jboss-4.2.3.GA/server/coord/coordConfig/database/oracle-libs
+cp setup/ojdbc7.jar pp/jboss/jboss-4.2.3.GA/server/coord/coordConfig/database/oracle-libs
 
 echo "Creating database schemas"
 docker run --rm -v $(pwd)/db:/setup --volumes-from pp --link orcl:db guywithnose/sqlplus /setup/install
