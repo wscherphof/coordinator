@@ -1,4 +1,4 @@
-FROM setup/swift
+FROM coord:base
 MAINTAINER Wouter Scherphof <wouter.scherphof@ismobile.com>
 
 RUN cp /app/ismobile/jboss-4.2.3.GA/server/all/lib/jbossws-* /app/ismobile/jboss-4.2.3.GA/server/default/lib

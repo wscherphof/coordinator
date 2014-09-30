@@ -1,0 +1,6 @@
+#!/bin/bash
+
+mkdir /app
+mkdir /app/ismobile
+cp -r /jbpp/* /app/ismobile
+cp -r /smqpp/* /app/ismobile

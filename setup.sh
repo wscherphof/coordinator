@@ -43,22 +43,18 @@ docker run --rm -v $(pwd)/db:/setup --volumes-from jbpp --link orcl:db guywithno
 echo "Creating HpDoc heap"
 docker run --rm -v $(pwd)/heap:/setup --volumes-from jbpp --link orcl:db tifayuki/java:7 /setup/create
 
-echo "Installing the jBoss & SwiftMQ packages in a Java image"
-docker run --name jboss --volumes-from jbpp tifayuki/java:7 /bin/bash -c "mkdir /app && mkdir /app/ismobile && cp -r /jbpp/* /app/ismobile"
-docker commit jboss setup/jboss
-docker rm jboss
-docker run --name swift --volumes-from smqpp setup/jboss /bin/bash -c "cp -r /smqpp/* /app/ismobile"
-docker commit swift setup/swift
-docker rm swift
+echo "Installing the jBoss & SwiftMQ packages in a base Java image"
+docker run --name base -v $(pwd)/setup:/setup --volumes-from jbpp --volumes-from smqpp tifayuki/java:7 /setup/install
+docker commit base coord:base
+docker rm base
 echo "Removing existing Coordinator container & image"
 docker stop coord
 docker rm coord
 docker rmi coord
 echo "Building the new coord image"
 docker build -t coord coord
-echo "Removing the intermediairy Java images"
-docker rmi setup/jboss
-docker rmi setup/swift
+echo "Removing the intermediairy Java image"
+docker rmi coord:base
 
 echo "Removing the data volumes"
 docker rm -v jbpp
@@ -68,6 +64,7 @@ rm -rf smqpp
 
 echo ""
 echo "Done. Now: $(date) - Started: $START"
-echo "Starting a Coordinator container now:"
-docker run --name coord -dP --link orcl:db coord
+RUN="docker run --name coord -dP --link orcl:db coord"
+echo "Starting a Coordinator container now, using: $RUN"
+$RUN
 echo "See: docker logs coord"
