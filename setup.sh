@@ -48,9 +48,9 @@ docker run --name base -v $(pwd)/setup:/setup --volumes-from pp tifayuki/java:7 
 docker commit base coord:base
 docker rm base
 echo "Removing existing Coordinator container & image"
-docker stop coord
-docker rm coord
-docker rmi coord
+docker stop coord 2> /dev/null
+docker rm coord   2> /dev/null
+docker rmi coord  2> /dev/null
 echo "Building the new coord image"
 docker build -t coord coord
 echo "Removing the intermediairy Java image"
