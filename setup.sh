@@ -4,12 +4,12 @@ START=$(date)
 
 echo "Starting an Oracle container"
 # run an Oracle container (without removing any existing, since that may just hurt too much)
-docker run --privileged --name orcl -d wscherphof/oracle-12c 2> /dev/null
+docker run --privileged --name coorddb -d wscherphof/oracle-12c 2> /dev/null
 # in case it already existed and was stopped
-docker start orcl
+docker start coorddb
 echo -n "Wait while ensuring the database has started..."
 while :; do
-	ERROR=$(docker run --rm --link orcl:db -v $(pwd)/setup:/setup guywithnose/sqlplus /setup/connect | grep ERROR)
+	ERROR=$(docker run --rm --link coorddb:db -v $(pwd)/setup:/setup guywithnose/sqlplus /setup/connect | grep ERROR)
 	if [ $ERROR ]; then
     echo -n "."
     sleep 1
@@ -38,10 +38,10 @@ docker run --rm -v $(pwd)/bc_jbossprepack-R4.7.0.zip:/pp.zip --volumes-from pp b
 cp setup/ojdbc7.jar pp/jboss/jboss-4.2.3.GA/server/coord/coordConfig/database/oracle-libs
 
 echo "Creating database schemas"
-docker run --rm -v $(pwd)/db:/setup --volumes-from pp --link orcl:db guywithnose/sqlplus /setup/install
+docker run --rm -v $(pwd)/db:/setup --volumes-from pp --link coorddb:db guywithnose/sqlplus /setup/install
 
 echo "Creating HpDoc heap"
-docker run --rm -v $(pwd)/heap:/setup --volumes-from pp --link orcl:db tifayuki/java:7 /setup/create
+docker run --rm -v $(pwd)/heap:/setup --volumes-from pp --link coorddb:db tifayuki/java:7 /setup/create
 
 echo "Installing the jBoss & SwiftMQ packages in a base Java image"
 docker run --name base -v $(pwd)/setup:/setup --volumes-from pp tifayuki/java:7 /setup/install
@@ -61,8 +61,10 @@ docker rm -v pp
 rm -rf pp
 
 echo ""
-echo "Done. Now: $(date) - Started: $START"
-RUN="docker run --name coord -dP --link orcl:db coord"
-echo "Starting a Coordinator container now, using: $RUN"
-$RUN
-echo "See: docker logs coord"
+echo "Done. Timer:"
+echo "- Now: $(date)"
+echo "- Started: $START"
+echo ""
+
+echo "To run a container: \$ docker run --name coord -d -p 8085:8085 --link coorddb:db coord"
+echo "To see what the container did: \$ docker logs coord"

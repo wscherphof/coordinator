@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ORCL=${DB_PORT_1521_TCP_ADDR}:${DB_PORT_1521_TCP_PORT}/orcl
+ORCL=${DB_PORT_1521_TCP_ADDR}:${DB_PORT_1521_TCP_PORT}/${DB_ENV_ORACLE_SID}
 FULL_INSTALL=/pp/jboss/jboss-4.2.3.GA/server/coord/coordConfig/database/ism_setup/full_install
 
 sqlplus system/manager@$ORCL @/setup/create_user.sql
