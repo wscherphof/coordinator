@@ -1,7 +1,7 @@
 #!/bin/bash
 
-ORCL=${DB_PORT_1521_TCP_ADDR}:${DB_PORT_1521_TCP_PORT}/orcl
-cat >> /connect.sql <<EOF
+ORCL=${DB_PORT_1521_TCP_ADDR}:${DB_PORT_1521_TCP_PORT}/${DB_ENV_ORACLE_SID}
+cat > /connect.sql <<EOF
 connect system/manager@$ORCL
 exit
 EOF
